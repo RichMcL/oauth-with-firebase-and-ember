@@ -4,11 +4,11 @@ I recently entered an application in to the Static Showdown, a 48 hour, frontend
 
 Firebase have authentication methods for a few different OAuth providers. You can use Twitter, Facebook, GitHub etc, so pick your provider and add the tokens to your Firebase apps auth page (https://your-app.firebaseio.com/?page=Auth).
 
-Lucky for us, Firebase have an Ember library that's ready to go with ember-cli. So you can just run `npm install emberfire --save-dev`. This will also install an ember-data adapter, but you don't have to use that if you're using your own api/backend. In this post, we'll just be using the authentication parts of the library.
+Lucky for us, Firebase has an Ember library that's ready to go with ember-cli. So you can just run `npm install emberfire --save-dev`. This will also install an ember-data adapter, but you don't have to use that if you're using your own api/backend. In this post, we'll just be using the authentication parts of the library.
 
 ##### Logging In
 
-You'll want to create a button for your users to click with kicks off the login action.
+You'll want to create a button for your users to click which kicks off the login action.
 
 ```markup
 <p class="lead button">
@@ -34,7 +34,7 @@ actions: {
 }
 ```
 
-You might notice above that I'm accessing a property on the controller called session. This is an initializer that gets added to routes, controllers, and templates when the app boots. The aim of `session` is to provide an interface to Firebase and give us easy access to functions like `isAuthenticated` in our views etc.
+You might notice above that I'm accessing a property on the controller called session. This is an initializer that gets added to routes, controllers, and templates when the app boots. The aim of `session` is to provide an interface to Firebase and give us easy access to functions like `isAuthenticated` in our views, etc.
 
 ```javascript
 import Ember from "ember";
@@ -83,14 +83,14 @@ export default {
 
 ```
 
-The session is just a plain old Ember Object with a few functions. The first function we create is used to setup a callback for Firebase. `onAuth` is fired whenever the auth details change for the sesssion. Firebase manages its own internal session and using functions like these we can hook in to it and create a nice wrapper. When the auth status changes we check to see if the user is authenticated or not and update our own property `isAuthenticated` which we use in our views to show different states depending on whether the user is logged in or out.
+The session is just a plain old Ember Object with a few functions. The first function we create is used to setup a callback for Firebase. `onAuth` is fired whenever the auth details change for the sesssion. Since Firebase manages its own internal session, we can use these functions to create a nice wrapper. When the auth status changes we check to see if the user is authenticated. We then update our own property `isAuthenticated` accordingly which the views use to show different states depending on whether the user is logged in or out.
 
-The next function is `login`. This is the function we used previously in the login action within our controller. We wrap it in an Ember promise and kick off the authentication flow. I've used GitHub here, so make sure to sub in whatever provider your're using. Firebase will take care of the popup and getting the OAuth token for us using their backend servers. Once the user is either successfully authenticated or they've rejected your request for their details Firebase will return with either an error or a user object. We can just check for the presence of a user then resolve the promise or reject it. If you look back at our controller, you can now either persist the user details to your own database or continue with your applications next step.
+The next function is `login`. This is the function we used previously in the login action within our controller. We wrap it in an Ember promise and kick off the authentication flow. I've used GitHub here, so make sure to sub in whatever provider you're using. Firebase will take care of the popup and getting the OAuth token for us using their backend servers. Firebase will return with either an error or a user object, depending on whether the user successfully authenticated. We can just check for the presence of a user then either resolve or reject the promise. If you look back at our controller, you can now either persist the user details to your own database or continue with your application's next step.
 
-Because Firebase manages its own session details, the next function just provides a nicer way to access the an object representing the currently authenticated users details. We set this up as a property that will watches for `isAuthenticated` changes.
+Because Firebase manages its own session details, the next function just provides a nicer way to access the an object representing the currently authenticated user's details. We set this up as a property that will watch for `isAuthenticated` changes.
 
 #### Templates
-Because we injected the session object in to our controllers we can use it in any template to show authenticated states and unauthenticated states and user the current users details to personalise the page.
+Because we injected the session object in to our controllers, we can use it in any template to show both authenticated and unauthenticated states. The current user's details is also available to help personalize the page.
 
 ```markup
 {{#if session.isAuthenticated}}
@@ -104,4 +104,4 @@ Because we injected the session object in to our controllers we can use it in an
 {{/if}}
 ```
 
-The emberfire plug in makes it very easy to build ember projects with a solid backend. So I'd highly recommend taking a look and seeing if it would be a good fit for your next project, or even something you could integrate in to a current project.
+The emberfire plug in makes it very easy to build ember projects with a solid backend. I'd highly recommend taking a look and seeing if it would be a good fit for your next project, or even something you could integrate in to a current project.
